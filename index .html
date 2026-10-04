@@ -1,0 +1,3639 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PadhaiPlan AI ⚡ — Autonomous Exam Revision Engine & Study Station</title>
+  <meta name="description" content="AI-assisted adaptive exam study planner, voice coach, Pomodoro RPG battle, and revision quiz engine built for CSC Back-to-School Hackathon 2026.">
+  <style>
+    /* ==========================================================================
+       THEME VARIABLES & DESIGN SYSTEM (Glassmorphism & Responsive Grid)
+       ========================================================================== */
+    :root {
+      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Dark Mode (Cyberpunk Scholar Theme) */
+    [data-theme="dark"] {
+      --bg-gradient: radial-gradient(circle at 15% 15%, #1a1630 0%, #0d0b18 60%, #08060f 100%);
+      --bg-panel: rgba(22, 19, 38, 0.78);
+      --bg-panel-solid: #161326;
+      --bg-card: rgba(30, 26, 51, 0.65);
+      --bg-input: rgba(18, 15, 33, 0.85);
+      --border-color: rgba(160, 140, 255, 0.18);
+      --border-focus: #8a6bff;
+      --text-main: #f3f0ff;
+      --text-muted: #9f97ba;
+      --text-dim: #6d6688;
+      --primary: #8a6bff;
+      --primary-hover: #9c82ff;
+      --primary-glow: rgba(138, 107, 255, 0.35);
+      --accent: #ff6b9d;
+      --accent-glow: rgba(255, 107, 157, 0.35);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --cyan: #06b6d4;
+      --tag-hard-bg: rgba(239, 68, 68, 0.18);
+      --tag-hard-text: #fca5a5;
+      --tag-med-bg: rgba(245, 158, 11, 0.18);
+      --tag-med-text: #fcd34d;
+      --tag-easy-bg: rgba(16, 185, 129, 0.18);
+      --tag-easy-text: #6ee7b7;
+      --shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border-color);
+      --shadow-hover: 0 16px 40px -10px rgba(138, 107, 255, 0.25), 0 0 0 1.5px var(--border-focus);
+    }
+
+    /* Light Mode */
+    [data-theme="light"] {
+      --bg-gradient: radial-gradient(circle at 10% 20%, #f4f0ff 0%, #e9edfa 50%, #fdf2f7 100%);
+      --bg-panel: rgba(255, 255, 255, 0.85);
+      --bg-panel-solid: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-input: #f8f6fc;
+      --border-color: rgba(138, 107, 255, 0.2);
+      --border-focus: #7351f5;
+      --text-main: #1f1b2e;
+      --text-muted: #645e78;
+      --text-dim: #948ea8;
+      --primary: #7351f5;
+      --primary-hover: #5f3ee0;
+      --primary-glow: rgba(115, 81, 245, 0.25);
+      --accent: #e63975;
+      --accent-glow: rgba(230, 57, 117, 0.25);
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --cyan: #0891b2;
+      --tag-hard-bg: #fee2e2;
+      --tag-hard-text: #b91c1c;
+      --tag-med-bg: #fef3c7;
+      --tag-med-text: #b45309;
+      --tag-easy-bg: #d1fae5;
+      --tag-easy-text: #047857;
+      --shadow: 0 8px 25px rgba(120, 100, 180, 0.12), 0 0 0 1px var(--border-color);
+      --shadow-hover: 0 14px 35px rgba(115, 81, 245, 0.2), 0 0 0 1.5px var(--border-focus);
+    }
+
+    /* Cozy Sunset Mode */
+    [data-theme="sunset"] {
+      --bg-gradient: radial-gradient(circle at top right, #2b182e 0%, #1c1427 45%, #120e1c 100%);
+      --bg-panel: rgba(38, 24, 46, 0.8);
+      --bg-panel-solid: #26182e;
+      --bg-card: rgba(48, 30, 56, 0.7);
+      --bg-input: rgba(26, 17, 33, 0.9);
+      --border-color: rgba(255, 140, 100, 0.22);
+      --border-focus: #ff7a59;
+      --text-main: #fff2ed;
+      --text-muted: #c9aeb5;
+      --text-dim: #8c737c;
+      --primary: #ff7a59;
+      --primary-hover: #ff9175;
+      --primary-glow: rgba(255, 122, 89, 0.35);
+      --accent: #f59e0b;
+      --accent-glow: rgba(245, 158, 11, 0.35);
+      --success: #10b981;
+      --warning: #f97316;
+      --danger: #ef4444;
+      --cyan: #38bdf8;
+      --tag-hard-bg: rgba(239, 68, 68, 0.2);
+      --tag-hard-text: #fca5a5;
+      --tag-med-bg: rgba(249, 115, 22, 0.2);
+      --tag-med-text: #fdba74;
+      --tag-easy-bg: rgba(16, 185, 129, 0.2);
+      --tag-easy-text: #6ee7b7;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px var(--border-color);
+      --shadow-hover: 0 16px 40px rgba(255, 122, 89, 0.25), 0 0 0 1.5px var(--border-focus);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
+
+    .app-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 20px 16px;
+    }
+
+    /* Live Global Peer Study Ticker */
+    .global-peer-ticker {
+      background: rgba(138, 107, 255, 0.1);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .ticker-pulse {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      box-shadow: 0 0 8px var(--success);
+      animation: pulseDot 1.5s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    /* Navbar */
+    header {
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 16px 22px;
+      margin-bottom: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      font-size: 2rem;
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 14px;
+      box-shadow: 0 6px 18px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text h1 span {
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .badge-hackathon {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(138, 107, 255, 0.2);
+      color: var(--primary);
+      border: 1px solid rgba(138, 107, 255, 0.3);
+    }
+
+    .brand-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .control-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text-main);
+    }
+
+    .control-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .control-btn.active, .control-btn:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .audio-player-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 6px 12px;
+    }
+
+    .audio-player-mini select {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-size: 0.82rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .sound-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      color: var(--text-main);
+    }
+
+    /* Common Card Styles */
+    .glass-card {
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(160, 140, 255, 0.28);
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: -10px;
+      margin-bottom: 18px;
+    }
+
+    /* Preset Showcase for Judges */
+    .presets-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      background: rgba(138, 107, 255, 0.08);
+      border: 1px dashed var(--primary);
+      border-radius: 14px;
+    }
+
+    .presets-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preset-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .preset-btn:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    /* Form Fields Grid */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-family: var(--font-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    /* NLP Syllabus Quick Paste Area */
+    .syllabus-paste-area {
+      background: rgba(138, 107, 255, 0.06);
+      border: 1px dashed var(--border-color);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .syllabus-paste-area textarea {
+      height: 60px;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    /* Subject Builder Rows */
+    .subject-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .subject-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: var(--transition);
+    }
+
+    .subject-card:hover {
+      border-color: rgba(138, 107, 255, 0.35);
+    }
+
+    .subject-row-main {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .subject-name-input {
+      flex: 2;
+      min-width: 180px;
+    }
+
+    .subject-diff-select {
+      flex: 1;
+      min-width: 130px;
+    }
+
+    .subject-chapters-input {
+      flex: 3;
+      min-width: 220px;
+      font-size: 0.86rem;
+    }
+
+    .btn-icon-del {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      font-size: 1.1rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .btn-icon-del:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .subject-sub-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      padding-top: 4px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .btn-autofill {
+      background: transparent;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-autofill:hover {
+      text-decoration: underline;
+    }
+
+    .btn-add-subject {
+      background: rgba(138, 107, 255, 0.12);
+      border: 1px dashed var(--primary);
+      color: var(--primary);
+      padding: 12px;
+      border-radius: 12px;
+      width: 100%;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-add-subject:hover {
+      background: rgba(138, 107, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    /* Primary Generate Button */
+    .btn-primary-launch {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 16px;
+      padding: 18px 24px;
+      width: 100%;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      cursor: pointer;
+      box-shadow: 0 10px 30px var(--primary-glow);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .btn-primary-launch:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px var(--primary-glow);
+    }
+
+    /* ==========================================================================
+       PLAN DASHBOARD & HUD
+       ========================================================================== */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Live Countdown HUD */
+    .hud-hero-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .countdown-card {
+      background: linear-gradient(135deg, rgba(138, 107, 255, 0.15), rgba(255, 107, 157, 0.15));
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: var(--shadow);
+    }
+
+    .countdown-exam-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 10px;
+    }
+
+    .countdown-timer {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 8px 0;
+    }
+
+    .cd-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px;
+      min-width: 62px;
+    }
+
+    .cd-val {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--primary);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    .cd-unit-lbl {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    /* Stats Card (Streak + Readiness) */
+    .stat-badge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-tile {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .stat-tile-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+    }
+
+    .stat-tile-val {
+      font-size: 1.4rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .stat-tile-lbl {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Study Buddy Pet Banner */
+    .buddy-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(138, 107, 255, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .buddy-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .buddy-avatar {
+      font-size: 2.8rem;
+      line-height: 1;
+      animation: buddyFloat 2.5s ease-in-out infinite;
+    }
+
+    @keyframes buddyFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .buddy-speech {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .buddy-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .buddy-xp-bar {
+      width: 140px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .buddy-xp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), var(--cyan));
+      border-radius: 999px;
+      width: 45%;
+      transition: width 0.4s ease;
+    }
+
+    /* Boss Battle RPG Arena Box */
+    .boss-arena-card {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(138, 107, 255, 0.15));
+      border: 1.5px solid rgba(239, 68, 68, 0.4);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .boss-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .boss-avatar-box {
+      font-size: 3.2rem;
+      line-height: 1;
+      animation: bossPulse 2s infinite alternate;
+    }
+
+    @keyframes bossPulse {
+      from { transform: scale(1); filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.4)); }
+      to { transform: scale(1.08); filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.8)); }
+    }
+
+    .boss-hp-bar {
+      width: 100%;
+      height: 14px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 8px 0;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .boss-hp-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ef4444, #f59e0b);
+      width: 100%;
+      transition: width 0.6s ease;
+    }
+
+    /* Smart AI Recommendation Card */
+    .ai-smart-advisor {
+      background: linear-gradient(135deg, rgba(138, 107, 255, 0.12), rgba(6, 182, 212, 0.12));
+      border: 1.5px solid rgba(138, 107, 255, 0.4);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(138, 107, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ai-advisor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ai-advisor-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-advisor-body {
+      background: var(--bg-card);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      line-height: 1.6;
+    }
+
+    .ai-advisor-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-action-small {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action-small:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-action-secondary {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-action-secondary:hover {
+      border-color: var(--primary);
+    }
+
+    .btn-voice-talk {
+      background: linear-gradient(135deg, #06b6d4, #3b82f6);
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+      transition: var(--transition);
+    }
+
+    .btn-voice-talk:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+
+    /* Tab Navigation */
+    .dashboard-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      border-color: var(--border-color);
+      color: var(--primary);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Day Plan Cards */
+    .days-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .day-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+      transition: var(--transition);
+    }
+
+    .day-card.is-today {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary), 0 8px 25px var(--primary-glow);
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .day-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .day-badge-today {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .day-badge-revision {
+      background: rgba(230, 57, 117, 0.2);
+      color: var(--accent);
+      border: 1px solid rgba(230, 57, 117, 0.3);
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .day-date {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .task-item {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: var(--transition);
+    }
+
+    .task-item:hover {
+      border-color: rgba(138, 107, 255, 0.3);
+    }
+
+    .task-item.is-done {
+      opacity: 0.6;
+      background: rgba(16, 185, 129, 0.05);
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .task-item.is-done .task-title {
+      text-decoration: line-through;
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-checkbox {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--success);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .task-details {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-weight: 700;
+      font-size: 0.94rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-subtopic {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .diff-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .diff-hard { background: var(--tag-hard-bg); color: var(--tag-hard-text); }
+    .diff-med { background: var(--tag-med-bg); color: var(--tag-med-text); }
+    .diff-easy { background: var(--tag-easy-bg); color: var(--tag-easy-text); }
+
+    .btn-task-timer {
+      background: rgba(138, 107, 255, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(138, 107, 255, 0.3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+    }
+
+    .btn-task-timer:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-task-quiz {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+    }
+
+    .btn-task-quiz:hover {
+      background: var(--cyan);
+      color: #fff;
+    }
+
+    /* Interactive Forgetting Curve Canvas Box */
+    .brain-curve-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .curve-canvas-wrap {
+      width: 100%;
+      height: 220px;
+      position: relative;
+    }
+
+    canvas#forgettingCurveCanvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Score Predictor Sliders */
+    .predictor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .predictor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .score-meter-big {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--success);
+      font-family: var(--font-mono);
+      line-height: 1;
+      margin: 8px 0;
+    }
+
+    .panic-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .panic-low { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .panic-med { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .panic-high { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    /* Mock Exam Simulator Paper */
+    .mock-paper-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .mock-q-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    /* Cheat Sheet Cards */
+    .cheatsheet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .formula-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .formula-card h3 {
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .formula-code {
+      background: var(--bg-panel);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      color: #38bdf8;
+      margin: 6px 0;
+      display: block;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      white-space: pre-wrap;
+    }
+
+    /* Calendar Grid View */
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .cal-cell {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px;
+      min-height: 140px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-cell-header {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .cal-chip {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 6px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      background: rgba(138, 107, 255, 0.15);
+      color: var(--primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Analytics Bars */
+    .analytics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .analytics-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .analytics-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      height: 14px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      border-radius: 999px;
+      transition: width 0.6s ease;
+    }
+
+    /* AI Quiz Runner */
+    .quiz-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .quiz-question-box {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .quiz-opt-btn {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      padding: 12px 16px;
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .quiz-opt-btn:hover {
+      border-color: var(--primary);
+      background: rgba(138, 107, 255, 0.1);
+    }
+
+    .quiz-opt-btn.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .quiz-opt-btn.wrong {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .quiz-explanation {
+      background: rgba(138, 107, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      border-left: 3px solid var(--primary);
+    }
+
+    /* ==========================================================================
+       MODALS: FOCUS STATION & CELEBRATIONS
+       ========================================================================== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 8, 20, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .focus-modal-content {
+      background: var(--bg-panel-solid);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 30px;
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+      position: relative;
+    }
+
+    .focus-task-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .focus-title {
+      font-size: 1.4rem;
+      font-weight: 900;
+      margin: 4px 0 16px;
+    }
+
+    .focus-ring-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 20px;
+      display: grid;
+      place-items: center;
+    }
+
+    .focus-ring-container svg {
+      transform: rotate(-90deg);
+    }
+
+    .focus-timer-text {
+      position: absolute;
+      font-size: 2.8rem;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      letter-spacing: -0.02em;
+    }
+
+    .focus-controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .focus-scratchpad {
+      text-align: left;
+      margin-top: 14px;
+    }
+
+    .focus-scratchpad label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .focus-scratchpad textarea {
+      height: 70px;
+      font-size: 0.85rem;
+      resize: none;
+      margin-top: 4px;
+    }
+
+    /* Celebration Modal */
+    .celeb-modal {
+      text-align: center;
+      padding: 36px 24px;
+      max-width: 440px;
+    }
+
+    .celeb-icon {
+      font-size: 4.5rem;
+      animation: bounce 1s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-12px); }
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* Voice Listening Banner */
+    .voice-listening-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      margin-top: 40px;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       PRINT STYLES FOR STUDY DESK SHEETS
+       ========================================================================== */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+      }
+      header, .presets-bar, .dashboard-tabs, .header-controls, .btn-action-small,
+      .btn-action-secondary, .btn-task-timer, .btn-task-quiz, footer, .modal-overlay, #setup,
+      .buddy-banner, .btn-voice-talk, .global-peer-ticker, .boss-arena-card {
+        display: none !important;
+      }
+      #planView {
+        display: block !important;
+      }
+      .glass-card, .day-card {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        background: #fff !important;
+        break-inside: avoid;
+      }
+      .task-title {
+        color: #000 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="app-container">
+    <!-- ===== LIVE GLOBAL PEER TICKER ===== -->
+    <div class="global-peer-ticker">
+      <div>
+        <span class="ticker-pulse"></span>
+        <span id="globalPeerText">🔥 <b>Alex</b> from California just completed 50m of AP Calculus!</span>
+      </div>
+      <div style="font-size:0.72rem; color:var(--text-dim);" id="i18n-ticker-label">Global Live Study Pulse</div>
+    </div>
+
+    <!-- ===== HEADER / NAVBAR ===== -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1><span>PadhaiPlan AI</span> <span class="badge-hackathon">CSC Back-to-School '26</span></h1>
+          <div class="brand-subtitle" id="i18n-tagline">Autonomous Exam Revision Engine & Study Station</div>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Ambient Sound Player -->
+        <div class="audio-player-mini">
+          <button class="sound-btn" id="soundToggleBtn" onclick="toggleAmbientSound()" title="Toggle Ambient Audio">🔇</button>
+          <select id="ambientSoundType" onchange="changeAmbientSound()">
+            <option value="rain">🌧️ Rain & Storm</option>
+            <option value="alpha">🧠 Alpha Waves (40Hz)</option>
+            <option value="cafe">☕ Study Cafe Noise</option>
+          </select>
+        </div>
+
+        <!-- Voice Coach Trigger -->
+        <button class="btn-voice-talk" onclick="speakDailyBriefing()" title="Hear Your Daily AI Study Briefing">
+          🎙️ <span id="i18n-btn-voice-brief">Voice Briefing</span>
+        </button>
+
+        <!-- Voice Commander Listening Button -->
+        <button class="control-btn" onclick="startVoiceCommands()" id="voiceCmdBtn" title="Speak Voice Commands (e.g. 'start timer', 'quiz me')">
+          🎤 Voice Commands
+        </button>
+
+        <!-- Language Switcher -->
+        <div class="control-pill">
+          <button class="control-btn active" id="langEnBtn" onclick="setLanguage('en')">🇬🇧 EN</button>
+          <button class="control-btn" id="langHiBtn" onclick="setLanguage('hi')">🇮🇳 Hinglish</button>
+        </div>
+
+        <!-- Theme Switcher -->
+        <div class="control-pill">
+          <button class="control-btn" onclick="setTheme('dark')" title="Dark Mode">🌙</button>
+          <button class="control-btn" onclick="setTheme('light')" title="Light Mode">☀️</button>
+          <button class="control-btn" onclick="setTheme('sunset')" title="Sunset Mode">🌅</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== SETUP & CONFIGURATION SCREEN ===== -->
+    <div id="setup">
+      <!-- 1-Click Judge & Student Demo Presets -->
+      <div class="presets-bar">
+        <span class="presets-label">⚡ <span id="i18n-presets-label">Quick 1-Click Presets:</span></span>
+        <button class="preset-btn" onclick="loadPreset('highschool')">🎓 High School Finals</button>
+        <button class="preset-btn" onclick="loadPreset('stem')">🔬 AP / STEM Sprint</button>
+        <button class="preset-btn" onclick="loadPreset('cbse')">🇮🇳 CBSE Board 10th/12th</button>
+        <button class="preset-btn" onclick="loadPreset('speed')">⚡ 3-Day Emergency Crunch</button>
+      </div>
+
+      <div class="glass-card">
+        <h2 class="section-title">📝 <span id="i18n-exam-details-title">Exam Information</span></h2>
+        <div class="section-subtitle" id="i18n-exam-details-sub">Configure your target exam and your realistic daily study availability.</div>
+
+        <div class="form-grid-3">
+          <div class="form-group">
+            <label id="i18n-lbl-exam-name">🎯 Exam Name</label>
+            <input type="text" id="examName" placeholder="e.g. Fall Semester Finals" value="Fall Semester Finals">
+          </div>
+          <div class="form-group">
+            <label id="i18n-lbl-exam-date">📅 Exam Start Date</label>
+            <input type="date" id="examDate">
+          </div>
+          <div class="form-group">
+            <label id="i18n-lbl-daily-hours">⏳ Daily Study Time</label>
+            <select id="dailyHours">
+              <option value="1">1 Hour / Day (Light)</option>
+              <option value="2">2 Hours / Day</option>
+              <option value="3" selected>3 Hours / Day (Recommended)</option>
+              <option value="4">4 Hours / Day</option>
+              <option value="5">5 Hours / Day (Intensive)</option>
+              <option value="6">6 Hours / Day (Cram Mode)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2" style="margin-top: 8px;">
+          <div class="form-group">
+            <label id="i18n-lbl-strategy">🧠 Scheduling Strategy</label>
+            <select id="studyStrategy">
+              <option value="spaced" selected>🔄 Spaced Repetition & Interleaving (Best Retention)</option>
+              <option value="deep">🎯 Deep Focus Marathon (Fewer Subjects per Day)</option>
+              <option value="hardfirst">⚡ Hardest Subjects Frontloaded (High Priority)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label id="i18n-lbl-pomodoro">⏱️ Focus Block Size</label>
+            <select id="pomoSize">
+              <option value="25" selected>25 Min Study + 5 Min Break (Standard)</option>
+              <option value="50">50 Min Study + 10 Min Break (Deep Work)</option>
+              <option value="15">15 Min Rapid Sprint</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Syllabus Text / OCR Parser -->
+        <div class="syllabus-paste-area">
+          <label style="font-size:0.84rem; font-weight:700; color:var(--text-muted);">
+            📋 Quick AI Syllabus Parser: Paste entire messy syllabus text below to auto-extract subjects & topics!
+          </label>
+          <textarea id="rawSyllabusText" placeholder="Paste your syllabus e.g. 'Mathematics: Limits, Derivatives, Integrals; Physics: Mechanics, Optics, Electricity;'"></textarea>
+          <button class="btn-action-secondary" style="font-size:0.8rem; padding:6px 12px; margin-top:8px;" onclick="parseRawSyllabus()">
+            ⚡ Auto-Parse Syllabus Text
+          </button>
+        </div>
+      </div>
+
+      <!-- Subject & Chapter Builder -->
+      <div class="glass-card">
+        <h2 class="section-title">📚 <span id="i18n-subjects-title">Subjects & Syllabus Breakdown</span></h2>
+        <div class="section-subtitle" id="i18n-subjects-sub">Add your subjects, set their difficulty, and list key chapters or auto-generate topics.</div>
+
+        <div class="subject-list" id="subjectList"></div>
+
+        <button class="btn-add-subject" onclick="addSubjectRow()">
+          ➕ <span id="i18n-btn-add-subject">Add Another Subject</span>
+        </button>
+      </div>
+
+      <button class="btn-primary-launch" onclick="generateSmartPlan()">
+        🚀 <span id="i18n-btn-launch">Generate Autonomous Study Plan</span>
+      </button>
+    </div>
+
+    <!-- ===== PLAN DASHBOARD SCREEN ===== -->
+    <div id="planView" class="hidden">
+      <!-- Top HUD Cards (Countdown, Streak, Readiness) -->
+      <div class="hud-hero-grid">
+        <div class="countdown-card">
+          <div class="countdown-exam-title" id="hudExamTitle">Fall Semester Finals</div>
+          <div class="countdown-timer">
+            <div class="cd-box"><div class="cd-val" id="cdDays">00</div><div class="cd-unit-lbl" id="i18n-cd-d">Days</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdHours">00</div><div class="cd-unit-lbl" id="i18n-cd-h">Hours</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdMins">00</div><div class="cd-unit-lbl" id="i18n-cd-m">Mins</div></div>
+            <div class="cd-box"><div class="cd-val" id="cdSecs">00</div><div class="cd-unit-lbl" id="i18n-cd-s">Secs</div></div>
+          </div>
+          <div style="font-size:0.82rem; color:var(--text-muted); margin-top:4px;" id="hudTotalHours">36 total study hours allocated</div>
+        </div>
+
+        <div class="stat-badge-grid">
+          <div class="stat-tile">
+            <div class="stat-tile-icon">🔥</div>
+            <div>
+              <div class="stat-tile-val" id="hudStreak">1 Day</div>
+              <div class="stat-tile-lbl" id="i18n-lbl-streak">Active Study Streak</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon">📈</div>
+            <div>
+              <div class="stat-tile-val" id="hudReadiness">0%</div>
+              <div class="stat-tile-lbl" id="i18n-lbl-readiness">Plan Completion</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon">🎯</div>
+            <div>
+              <div class="stat-tile-val" id="hudTasksLeft">0 / 0</div>
+              <div class="stat-tile-lbl" id="i18n-lbl-tasks">Tasks Completed</div>
+            </div>
+          </div>
+          <div class="stat-tile">
+            <div class="stat-tile-icon">🏆</div>
+            <div>
+              <div class="stat-tile-val" id="hudScholarTier">Novice</div>
+              <div class="stat-tile-lbl" id="i18n-lbl-tier">Scholar Tier</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Virtual Study Buddy Banner -->
+      <div class="buddy-banner">
+        <div class="buddy-left">
+          <div class="buddy-avatar" id="buddyAvatar">🦉</div>
+          <div>
+            <div class="buddy-speech" id="buddySpeech">"Hey scholar! I'm Byte, your AI study companion. Let's conquer today's goals!"</div>
+            <div class="buddy-sub" id="buddySub">Level 1 Study Companion • XP: <span id="buddyXpText">150 / 500</span></div>
+            <div class="buddy-xp-bar"><div class="buddy-xp-fill" id="buddyXpBar" style="width: 30%;"></div></div>
+          </div>
+        </div>
+        <div>
+          <button class="btn-action-small" onclick="petStudyBuddy()">✨ High-Five Byte</button>
+        </div>
+      </div>
+
+      <!-- Gamified RPG Boss Battle Arena -->
+      <div class="boss-arena-card">
+        <div class="boss-header">
+          <div>
+            <div style="font-size:0.75rem; font-weight:800; text-transform:uppercase; color:var(--danger); letter-spacing:0.05em;">⚔️ EXAM BOSS BATTLE QUEST</div>
+            <div style="font-size:1.25rem; font-weight:900;" id="bossName">The Procrastination Demon (Level 12)</div>
+            <div style="font-size:0.82rem; color:var(--text-muted);" id="bossFlavorText">Each completed Pomodoro block deals 150 Damage to the Boss!</div>
+          </div>
+          <div class="boss-avatar-box" id="bossAvatar">👹</div>
+        </div>
+        <div class="boss-hp-bar">
+          <div class="boss-hp-fill" id="bossHpFill" style="width: 100%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:0.8rem; font-weight:700;">
+          <span id="bossHpText">Boss HP: 1,000 / 1,000</span>
+          <span style="color:var(--accent);">Rewards: Legendary A+ Trophy 🏆</span>
+        </div>
+      </div>
+
+      <!-- AI Smart Strategist Recommendation ("Aaj Kya Padhun?") -->
+      <div class="ai-smart-advisor" id="aiAdvisorCard">
+        <div class="ai-advisor-header">
+          <div class="ai-advisor-title">🤖 <span id="i18n-ai-advisor-title">Autonomous Study Strategist</span></div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button class="btn-voice-talk" onclick="speakDailyBriefing()" style="padding:6px 12px; font-size:0.8rem;">
+              🔊 Speak Briefing
+            </button>
+            <button class="btn-action-secondary" onclick="refreshAIAdvice()" style="padding:6px 12px; font-size:0.8rem;">
+              🔄 <span id="i18n-btn-recalc">Recalculate Next Step</span>
+            </button>
+          </div>
+        </div>
+        <div class="ai-advisor-body" id="aiAdvisorText">
+          Analyzing your syllabus and days remaining...
+        </div>
+        <div class="ai-advisor-actions" id="aiAdvisorActions"></div>
+      </div>
+
+      <!-- Dashboard View Navigation Tabs -->
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" onclick="switchTab('timeline')" id="tab-timeline">📋 <span id="i18n-tab-timeline">Daily Timeline</span></button>
+        <button class="tab-btn" onclick="switchTab('mockexam')" id="tab-mockexam">📝 <span id="i18n-tab-mockexam">Mock Exam Paper</span></button>
+        <button class="tab-btn" onclick="switchTab('memory')" id="tab-memory">🧠 <span id="i18n-tab-memory">Brain Retention Curve</span></button>
+        <button class="tab-btn" onclick="switchTab('predictor')" id="tab-predictor">🔮 <span id="i18n-tab-predictor">Grade Predictor</span></button>
+        <button class="tab-btn" onclick="switchTab('cheatsheet')" id="tab-cheatsheet">📝 <span id="i18n-tab-cheatsheet">Formula Sheets</span></button>
+        <button class="tab-btn" onclick="switchTab('calendar')" id="tab-calendar">🗓️ <span id="i18n-tab-calendar">Calendar Grid</span></button>
+        <button class="tab-btn" onclick="switchTab('analytics')" id="tab-analytics">⚖️ <span id="i18n-tab-analytics">Curriculum Balance</span></button>
+        <button class="tab-btn" onclick="switchTab('quiz')" id="tab-quiz">⚡ <span id="i18n-tab-quiz">AI Quiz Station</span></button>
+        <button class="tab-btn" onclick="switchTab('export')" id="tab-export">📦 <span id="i18n-tab-export">Export & Print</span></button>
+      </div>
+
+      <!-- TAB 1: Daily Timeline View -->
+      <div id="view-timeline" class="tab-view">
+        <div class="days-container" id="daysList"></div>
+      </div>
+
+      <!-- TAB: Mock Exam Paper Simulator -->
+      <div id="view-mockexam" class="tab-view hidden">
+        <div class="glass-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+            <div>
+              <h2 class="section-title" style="margin:0;">📝 <span id="i18n-mock-title">Full Timed Mock Exam Simulator</span></h2>
+              <div class="section-subtitle" style="margin:0;" id="i18n-mock-sub">Instant full-length practice paper synthesized from your entered curriculum topics.</div>
+            </div>
+            <button class="btn-action-small" onclick="generateMockExamPaper()">🔄 Synthesize New Paper</button>
+          </div>
+
+          <div class="mock-paper-card" id="mockExamPaperContainer">
+            <div id="mockQuestionsList"></div>
+            <button class="btn-primary-launch" style="margin-top:16px;" onclick="gradeMockExam()">
+              🏁 Submit & Grade Mock Exam
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Memory Retention Simulator -->
+      <div id="view-memory" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">🧠 <span id="i18n-memory-title">Ebbinghaus Memory Retention Curve Simulator</span></h2>
+          <div class="section-subtitle" id="i18n-memory-sub">Visualizing how PadhaiPlan's spaced-repetition algorithm halts memory decay compared to passive cramming.</div>
+          
+          <div class="brain-curve-box">
+            <div class="curve-canvas-wrap">
+              <canvas id="forgettingCurveCanvas"></canvas>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:10px; font-size:0.84rem; color:var(--text-muted); flex-wrap:wrap; gap:8px;">
+              <span style="color:#ef4444; font-weight:700;">🔴 Red: Normal Cramming (Drops to 20% in 4 days)</span>
+              <span style="color:#10b981; font-weight:700;">🟢 Green: PadhaiPlan Spaced Repetition (Maintains 92%+)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Exam Grade Predictor & Panic Calculator -->
+      <div id="view-predictor" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">🔮 <span id="i18n-predictor-title">Autonomous Exam Grade & Readiness Predictor</span></h2>
+          <div class="section-subtitle" id="i18n-predictor-sub">Adjust your current preparation pace to simulate your projected score and Panic Index.</div>
+
+          <div class="predictor-grid">
+            <div class="predictor-card">
+              <label style="font-size:0.85rem; font-weight:700; color:var(--text-muted);">📚 Syllabus Covered So Far (%):</label>
+              <input type="range" id="predCoveredSlider" min="0" max="100" value="45" oninput="updateScorePrediction()" style="margin:12px 0;">
+              <div style="display:flex; justify-content:space-between; font-weight:800; font-size:0.9rem;">
+                <span>0%</span><span id="predCoveredVal" style="color:var(--primary);">45%</span><span>100%</span>
+              </div>
+
+              <label style="font-size:0.85rem; font-weight:700; color:var(--text-muted); margin-top:16px; display:block;">⏱️ Dedicated Study Hours / Day:</label>
+              <input type="range" id="predHoursSlider" min="1" max="8" value="3" oninput="updateScorePrediction()" style="margin:12px 0;">
+              <div style="display:flex; justify-content:space-between; font-weight:800; font-size:0.9rem;">
+                <span>1 hr</span><span id="predHoursVal" style="color:var(--primary);">3 hrs / day</span><span>8 hrs</span>
+              </div>
+            </div>
+
+            <div class="predictor-card" style="text-align:center; display:flex; flex-direction:column; justify-content:center;">
+              <div style="font-size:0.9rem; font-weight:700; color:var(--text-muted);">PROJECTED EXAM SCORE</div>
+              <div class="score-meter-big" id="predScoreVal">91%</div>
+              <div style="margin:8px 0;">
+                <span class="panic-badge panic-low" id="predPanicBadge">CALM & READY (LOW PANIC)</span>
+              </div>
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px;" id="predRecommendation">
+                On track for an A Grade! Maintain 3 Pomodoro sessions daily.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB: Formula Sheet & Cheatsheet Board -->
+      <div id="view-cheatsheet" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">📝 <span id="i18n-cheatsheet-title">Rapid Formula & Core Definitions Board</span></h2>
+          <div class="section-subtitle" id="i18n-cheatsheet-sub">Essential high-yield equations and concepts organized for quick pre-exam recall.</div>
+
+          <div class="cheatsheet-grid" id="formulaSheetGrid"></div>
+        </div>
+      </div>
+
+      <!-- TAB 2: Calendar Grid View -->
+      <div id="view-calendar" class="tab-view hidden">
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+
+      <!-- TAB 3: Curriculum Balance Analytics -->
+      <div id="view-analytics" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">⚖️ <span id="i18n-analytics-title">Difficulty-Weighted Allocation</span></h2>
+          <div class="section-subtitle" id="i18n-analytics-sub">Hard subjects receive exponentially more study slots to guarantee mastery before test day.</div>
+          <div class="analytics-list" id="analyticsBars"></div>
+        </div>
+      </div>
+
+      <!-- TAB 4: AI Quiz & Flashcard Station -->
+      <div id="view-quiz" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">⚡ <span id="i18n-quiz-title">Interactive Rapid-Fire Exam Quiz</span></h2>
+          <div class="section-subtitle" id="i18n-quiz-sub">Test your knowledge right now on any scheduled topic to cement what you study.</div>
+          
+          <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+            <select id="quizSubjectSelect" style="max-width:260px;" onchange="loadQuizForSubject()">
+              <!-- populated dynamically -->
+            </select>
+            <button class="btn-action-small" onclick="loadQuizForSubject()">🎲 Next Question</button>
+          </div>
+
+          <div class="quiz-container" id="quizContainer">
+            <div class="quiz-question-box" id="quizQuestionText">Loading quiz question...</div>
+            <div class="quiz-options" id="quizOptionsBox"></div>
+            <div class="quiz-explanation hidden" id="quizExplanationBox"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: Export & Print -->
+      <div id="view-export" class="tab-view hidden">
+        <div class="glass-card">
+          <h2 class="section-title">📦 <span id="i18n-export-title">Export, Sync & Print</span></h2>
+          <div class="section-subtitle" id="i18n-export-sub">Sync your study blocks with your phone calendar or print a clean schedule for your desk.</div>
+
+          <div class="form-grid-3">
+            <div class="stat-tile" style="cursor:pointer;" onclick="exportToICS()">
+              <div class="stat-tile-icon">📅</div>
+              <div>
+                <div class="stat-tile-val" style="font-size:1.1rem;">Google / Apple .ICS</div>
+                <div class="stat-tile-lbl">Export to Calendar File</div>
+              </div>
+            </div>
+            <div class="stat-tile" style="cursor:pointer;" onclick="window.print()">
+              <div class="stat-tile-icon">🖨️</div>
+              <div>
+                <div class="stat-tile-val" style="font-size:1.1rem;">Print Desk Sheet</div>
+                <div class="stat-tile-lbl">Print or Save as PDF</div>
+              </div>
+            </div>
+            <div class="stat-tile" style="cursor:pointer;" onclick="backupJSON()">
+              <div class="stat-tile-icon">💾</div>
+              <div>
+                <div class="stat-tile-val" style="font-size:1.1rem;">Save JSON Backup</div>
+                <div class="stat-tile-lbl">Export Study Plan Data</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn-action-secondary" onclick="editPlanSetup()">← <span id="i18n-btn-edit-plan">Edit Subjects & Settings</span></button>
+            <button class="btn-action-secondary" onclick="resetProgress()" style="color:var(--danger); border-color:rgba(239,68,68,0.3);">🗑️ Reset Progress</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+      ⚡ <b>PadhaiPlan AI</b> — Built with ❤️ by <b>Samarth Mishra</b> for <b>CSC Back-to-School Hackathon 2026</b>.<br>
+      High School Innovation & Social Good | Fully Client-Side & Open Source.
+    </footer>
+  </div>
+
+  <!-- ===== MODAL: POMODORO FOCUS STATION ===== -->
+  <div class="modal-overlay hidden" id="focusModal">
+    <div class="focus-modal-content">
+      <div class="focus-task-tag" id="focusTaskTag">FOCUS BLOCK</div>
+      <div class="focus-title" id="focusSubjectTitle">Mathematics: Calculus</div>
+
+      <div class="focus-ring-container">
+        <svg width="220" height="220">
+          <circle cx="110" cy="110" r="95" stroke="rgba(138,107,255,0.18)" stroke-width="12" fill="none"/>
+          <circle id="focusRingProgress" cx="110" cy="110" r="95" stroke="url(#timerGrad)" stroke-width="12" fill="none"
+            stroke-linecap="round" stroke-dasharray="597" stroke-dashoffset="0" style="transition: stroke-dashoffset 1s linear;"/>
+          <defs>
+            <linearGradient id="timerGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="var(--primary)"/>
+              <stop offset="100%" stop-color="var(--accent)"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="focus-timer-text" id="focusTimerDisplay">25:00</div>
+      </div>
+
+      <div class="focus-controls">
+        <button class="btn-action-small" id="focusPlayBtn" onclick="toggleFocusTimer()">▶️ Start Session</button>
+        <button class="btn-action-secondary" onclick="resetFocusTimer()">↺ Reset</button>
+        <button class="btn-action-secondary" onclick="completeFocusSession(true)">⚔️ Attack Boss</button>
+        <button class="btn-action-secondary" onclick="closeFocusModal()">✕ Close</button>
+      </div>
+
+      <div class="focus-scratchpad">
+        <label>📝 Quick Notes & Formulas for this block:</label>
+        <textarea id="focusScratchpad" placeholder="Jot down formulas, tricky doubts, or solved question numbers..."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CELEBRATION MODAL ===== -->
+  <div class="modal-overlay hidden" id="celebModal">
+    <div class="focus-modal-content celeb-modal">
+      <div class="celeb-icon" id="celebEmoji">🎉</div>
+      <h2 style="font-size:1.6rem; font-weight:900; margin:12px 0 6px;" id="celebTitle">Phenomenal Work!</h2>
+      <p style="color:var(--text-muted); margin-bottom:20px; font-size:1rem;" id="celebSubtitle">You dealt 150 Damage to the Boss and leveled up your study streak!</p>
+      <button class="btn-primary-launch" style="padding:12px 24px; font-size:1rem;" onclick="closeCelebModal()">
+        Continue Crushing It 🚀
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT LOGIC & ENGINES
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. LOCALIZATION (ENGLISH & HINGLISH)
+       ========================================================================== */
+    const I18N = {
+      en: {
+        tagline: "Autonomous Exam Revision Engine & Study Station",
+        presetsLabel: "Quick 1-Click Presets:",
+        examDetailsTitle: "Exam Information",
+        examDetailsSub: "Configure your target exam and your realistic daily study availability.",
+        lblExamName: "🎯 Exam Name",
+        lblExamDate: "📅 Exam Start Date",
+        lblDailyHours: "⏳ Daily Study Time",
+        lblStrategy: "🧠 Scheduling Strategy",
+        lblPomodoro: "⏱️ Focus Block Size",
+        subjectsTitle: "Subjects & Syllabus Breakdown",
+        subjectsSub: "Add your subjects, set their difficulty, and list key chapters or auto-generate topics.",
+        btnAddSubject: "Add Another Subject",
+        btnLaunch: "Generate Autonomous Study Plan",
+        cdD: "Days", cdH: "Hours", cdM: "Mins", cdS: "Secs",
+        lblStreak: "Active Study Streak",
+        lblReadiness: "Plan Completion",
+        lblTasks: "Tasks Completed",
+        lblTier: "Scholar Tier",
+        aiAdvisorTitle: "Autonomous Study Strategist",
+        btnRecalc: "Recalculate Next Step",
+        btnVoiceBrief: "Voice Briefing",
+        tabTimeline: "Daily Timeline",
+        tabMockexam: "Mock Exam Paper",
+        tabMemory: "Brain Retention Curve",
+        tabPredictor: "Grade Predictor",
+        tabCheatsheet: "Formula Sheets",
+        tabCalendar: "Calendar Grid",
+        tabAnalytics: "Curriculum Balance",
+        tabQuiz: "AI Quiz Station",
+        tabExport: "Export & Print",
+        analyticsTitle: "Difficulty-Weighted Allocation",
+        analyticsSub: "Hard subjects receive exponentially more study slots to guarantee mastery before test day.",
+        quizTitle: "Interactive Rapid-Fire Exam Quiz",
+        quizSub: "Test your knowledge right now on any scheduled topic to cement what you study.",
+        exportTitle: "Export, Sync & Print",
+        exportSub: "Sync your study blocks with your phone calendar or print a clean schedule for your desk.",
+        btnEditPlan: "Edit Subjects & Settings",
+        memoryTitle: "Ebbinghaus Memory Retention Curve Simulator",
+        memorySub: "Visualizing how PadhaiPlan's spaced-repetition algorithm halts memory decay compared to passive cramming.",
+        predictorTitle: "Autonomous Exam Grade & Readiness Predictor",
+        predictorSub: "Adjust your current preparation pace to simulate your projected score and Panic Index.",
+        cheatsheetTitle: "Rapid Formula & Core Definitions Board",
+        cheatsheetSub: "Essential high-yield equations and concepts organized for quick pre-exam recall.",
+        mockTitle: "Full Timed Mock Exam Simulator",
+        mockSub: "Instant full-length practice paper synthesized from your entered curriculum topics.",
+        tickerLabel: "Global Live Study Pulse"
+      },
+      hi: {
+        tagline: "Exam se pehle — Smart Study Planner & Focus Station",
+        presetsLabel: "1-Click Demo Presets:",
+        examDetailsTitle: "Exam Ki Details Bharo",
+        examDetailsSub: "Apna exam aur roz padhne ke ghante set karo.",
+        lblExamName: "🎯 Exam Ka Naam",
+        lblExamDate: "📅 Exam Start Date",
+        lblDailyHours: "⏳ Roz Kitne Ghante Padh Sakte Ho?",
+        lblStrategy: "🧠 Padhai Ka Tareeka (Strategy)",
+        lblPomodoro: "⏱️ Focus Block Size",
+        subjectsTitle: "Subjects Aur Chapters Daalo",
+        subjectsSub: "Mushkil subject ko zyada slots milenge taaki exam mein top marks aayein.",
+        btnAddSubject: "➕ Aur Subject Jodo",
+        btnLaunch: "🚀 Mera Smart Plan Banao",
+        cdD: "Din", cdH: "Ghante", cdM: "Min", cdS: "Sec",
+        lblStreak: "Study Streak",
+        lblReadiness: "Plan Kitna Hua",
+        lblTasks: "Tasks Done",
+        lblTier: "Scholar Level",
+        aiAdvisorTitle: "🤖 Aaj Kya Padhun? (AI Advisor)",
+        btnRecalc: "Naya Step Batao",
+        btnVoiceBrief: "Voice Briefing",
+        tabTimeline: "Din-ba-Din Plan",
+        tabMockexam: "Mock Exam Paper",
+        tabMemory: "Memory Retention",
+        tabPredictor: "Score Predictor",
+        tabCheatsheet: "Formula Sheets",
+        tabCalendar: "Calendar View",
+        tabAnalytics: "Subject Balance",
+        tabQuiz: "Quick Quiz Station",
+        tabExport: "Export & Print",
+        analyticsTitle: "Subject Time Allocation",
+        analyticsSub: "Mushkil subjects ko zyada time aur slots mile hain.",
+        quizTitle: "⚡ Rapid-Fire Revision Quiz",
+        quizSub: "Jo padha use test karke pakka karo.",
+        exportTitle: "Export Aur Print Karo",
+        exportSub: "Google Calendar mein sync karo ya table par lagane ke liye print karo.",
+        btnEditPlan: "Plan Dobara Set Karo",
+        memoryTitle: "Memory Retention Simulator",
+        memorySub: "Dikhata hai kaise spaced repetition se concepts bhoolte nahi hain.",
+        predictorTitle: "Exam Score & Panic Calculator",
+        predictorSub: "Dekho kitni taiyaari par exam mein kitne marks aane ki ummeed hai.",
+        cheatsheetTitle: "Formula & Concepts Board",
+        cheatsheetSub: "Exam se pehle fatfat revise karne ke liye zaroori formulas.",
+        mockTitle: "Mock Exam Simulator",
+        mockSub: "Syllabus ke hisaab se pura practice paper.",
+        tickerLabel: "Global Study Pulse"
+      }
+    };
+
+    let currentLang = 'en';
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.documentElement.setAttribute('data-lang', lang);
+      document.getElementById('langEnBtn').classList.toggle('active', lang === 'en');
+      document.getElementById('langHiBtn').classList.toggle('active', lang === 'hi');
+
+      const dict = I18N[lang];
+      for (const [key, val] of Object.entries(dict)) {
+        const el = document.getElementById(`i18n-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`);
+        if (el) el.textContent = val;
+      }
+      if (planState) refreshAIAdvice();
+    }
+
+    /* ==========================================================================
+       2. THEME SWITCHER
+       ========================================================================== */
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      try { localStorage.setItem('padhaiplan_theme', theme); } catch(e){}
+    }
+
+    /* ==========================================================================
+       3. WEB AUDIO AMBIENT SOUND & CHIME SYNTHESIZER
+       ========================================================================== */
+    let audioCtx = null;
+    let ambientNode = null;
+    let isPlayingAudio = false;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleAmbientSound() {
+      if (isPlayingAudio) stopAmbientSound();
+      else startAmbientSound();
+    }
+
+    function changeAmbientSound() {
+      if (isPlayingAudio) {
+        stopAmbientSound();
+        startAmbientSound();
+      }
+    }
+
+    function startAmbientSound() {
+      const ctx = getAudioContext();
+      const soundType = document.getElementById('ambientSoundType').value;
+      const btn = document.getElementById('soundToggleBtn');
+
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+      let lastOut = 0.0;
+
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        if (soundType === 'rain') {
+          output[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = output[i];
+          output[i] *= 3.5;
+        } else if (soundType === 'alpha') {
+          output[i] = Math.sin(2 * Math.PI * 220 * (i / ctx.sampleRate)) * 0.3 * (1 + 0.5 * Math.sin(2 * Math.PI * 40 * (i / ctx.sampleRate)));
+        } else {
+          output[i] = (lastOut + (0.01 * white)) / 1.01;
+          lastOut = output[i];
+          output[i] *= 2.8;
+        }
+      }
+
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = soundType === 'rain' ? 'lowpass' : 'bandpass';
+      filter.frequency.value = soundType === 'rain' ? 800 : 400;
+
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = 0.12;
+
+      whiteNoise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      whiteNoise.start();
+      ambientNode = { source: whiteNoise, gain: gainNode };
+      isPlayingAudio = true;
+      btn.textContent = '🔊';
+      btn.title = 'Mute Ambient Audio';
+    }
+
+    function stopAmbientSound() {
+      if (ambientNode) {
+        try { ambientNode.source.stop(); } catch(e){}
+        ambientNode = null;
+      }
+      isPlayingAudio = false;
+      const btn = document.getElementById('soundToggleBtn');
+      btn.textContent = '🔇';
+      btn.title = 'Start Ambient Audio';
+    }
+
+    function playChime() {
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 1.2);
+      } catch(e){}
+    }
+
+    /* ==========================================================================
+       4. SYNTHESIZED VOICE COACH BRIEFING & VOICE COMMANDS
+       ========================================================================== */
+    function speakDailyBriefing() {
+      if (!('speechSynthesis' in window)) {
+        alert("Speech synthesis is not supported in this browser.");
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      let textToSpeak = "";
+
+      if (planState) {
+        let firstIncomplete = null;
+        for (const day of planState.days) {
+          for (const task of day.tasks) {
+            if (!planState.completedTasks[task.id]) {
+              firstIncomplete = task;
+              break;
+            }
+          }
+          if (firstIncomplete) break;
+        }
+
+        if (firstIncomplete) {
+          textToSpeak = currentLang === 'hi'
+            ? `Namaste! PadhaiPlan AI ready hai. Aapka agla focus block hai ${firstIncomplete.subject}, topic ${firstIncomplete.chapter}. Chaliye pachees minute ka study session shuru karte hain!`
+            : `Hello scholar! Welcome to PadhaiPlan AI. Your next high-priority session is ${firstIncomplete.subject}, topic ${firstIncomplete.chapter}. Let's start a twenty-five minute focus sprint!`;
+        } else {
+          textToSpeak = "Congratulations! You have completed all scheduled study blocks! Excellent work!";
+        }
+      } else {
+        textToSpeak = "Welcome to PadhaiPlan AI. Choose a preset or enter your exam date to generate your personalized study roadmap!";
+      }
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.rate = 1.0;
+      utterance.pitch = 1.05;
+      window.speechSynthesis.speak(utterance);
+      miniConfetti();
+    }
+
+    function startVoiceCommands() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Voice recognition is not supported in this browser. Try Google Chrome or Microsoft Edge!");
+        return;
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      const btn = document.getElementById('voiceCmdBtn');
+      btn.textContent = "🔴 Listening...";
+      btn.style.borderColor = "var(--danger)";
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.toLowerCase();
+        btn.textContent = "🎤 Voice Commands";
+        btn.style.borderColor = "var(--border-color)";
+
+        if (transcript.includes("start") || transcript.includes("timer") || transcript.includes("focus")) {
+          if (planState) {
+            const firstTask = planState.days[0].tasks[0];
+            openFocusModal(firstTask.subject, firstTask.chapter, firstTask.id);
+            toggleFocusTimer();
+          }
+        } else if (transcript.includes("quiz")) {
+          switchTab('quiz');
+        } else if (transcript.includes("mock") || transcript.includes("exam")) {
+          switchTab('mockexam');
+        } else if (transcript.includes("brief") || transcript.includes("advice")) {
+          speakDailyBriefing();
+        } else {
+          alert(`Heard command: "${transcript}". (Supported commands: 'start timer', 'quiz me', 'mock exam', 'voice briefing')`);
+        }
+      };
+
+      recognition.onerror = () => {
+        btn.textContent = "🎤 Voice Commands";
+        btn.style.borderColor = "var(--border-color)";
+      };
+
+      recognition.start();
+    }
+
+    /* ==========================================================================
+       5. VIRTUAL STUDY BUDDY & RPG BOSS BATTLE
+       ========================================================================== */
+    let buddyXp = 150;
+    let bossHp = 1000;
+    const BUDDY_QUOTES = [
+      "🔥 Consistency beats intensity every single day!",
+      "💡 Pro tip: Drink a glass of water before starting your Pomodoro!",
+      "🚀 Every topic you tick off gets you closer to that dream score!",
+      "⭐ Hard topics build the strongest brain connections. You got this!",
+      "📚 Take a deep breath. Focus on one 25-minute block at a time!"
+    ];
+
+    function petStudyBuddy() {
+      buddyXp += 50;
+      if (buddyXp > 500) buddyXp = 500;
+      document.getElementById('buddyXpText').textContent = `${buddyXp} / 500`;
+      document.getElementById('buddyXpBar').style.width = `${(buddyXp / 500) * 100}%`;
+
+      const randomQuote = BUDDY_QUOTES[Math.floor(Math.random() * BUDDY_QUOTES.length)];
+      document.getElementById('buddySpeech').textContent = randomQuote;
+      document.getElementById('buddyAvatar').textContent = '🦉✨';
+      setTimeout(() => { document.getElementById('buddyAvatar').textContent = '🦉'; }, 1200);
+
+      playChime();
+      miniConfetti();
+    }
+
+    function damageBoss(amount = 150) {
+      bossHp = Math.max(0, bossHp - amount);
+      const pct = (bossHp / 1000) * 100;
+      document.getElementById('bossHpFill').style.width = `${pct}%`;
+      document.getElementById('bossHpText').textContent = `Boss HP: ${bossHp} / 1,000`;
+
+      if (bossHp === 0) {
+        document.getElementById('bossAvatar').textContent = '💀💥';
+        document.getElementById('bossName').textContent = 'The Procrastination Demon (DEFEATED!) 🏆';
+        openCelebModal("👑 BOSS SLAIN!", "You annihilated The Procrastination Demon! You have unlocked the Grandmaster Scholar Trophy!");
+      }
+    }
+
+    /* ==========================================================================
+       6. GLOBAL LIVE PEER STUDY TICKER SIMULATOR
+       ========================================================================== */
+    const PEER_EVENTS = [
+      "🔥 <b>Alex</b> from California completed 50m of AP Calculus!",
+      "🌟 <b>Priya</b> from Mumbai completed Day 4 streak in Physics!",
+      "⚡ <b>Ryan</b> from London unlocked Grandmaster Scholar Tier!",
+      "📖 <b>Sophia</b> from Toronto finished Organic Chemistry Cheatsheet!",
+      "🎯 <b>David</b> from Sydney scored 100% on the Calculus Quiz!"
+    ];
+    let peerIndex = 0;
+    setInterval(() => {
+      peerIndex = (peerIndex + 1) % PEER_EVENTS.length;
+      const el = document.getElementById('globalPeerText');
+      if (el) el.innerHTML = PEER_EVENTS[peerIndex];
+    }, 7000);
+
+    /* ==========================================================================
+       7. NLP RAW SYLLABUS TEXT PARSER
+       ========================================================================== */
+    function parseRawSyllabus() {
+      const raw = document.getElementById('rawSyllabusText').value.trim();
+      if (!raw) {
+        alert("Please paste some syllabus text first!");
+        return;
+      }
+
+      const listEl = document.getElementById('subjectList');
+      listEl.innerHTML = '';
+
+      // Split by semicolon or newline
+      const lines = raw.split(/[;\n]+/).map(l => l.trim()).filter(Boolean);
+      lines.forEach(line => {
+        let name = "Subject";
+        let topics = "";
+        let diff = "med";
+
+        if (line.includes(':')) {
+          const parts = line.split(':');
+          name = parts[0].trim();
+          topics = parts.slice(1).join(':').trim();
+        } else {
+          name = line;
+          topics = "Fundamentals, Problem Solving, Revision";
+        }
+
+        const lower = name.toLowerCase();
+        if (lower.includes('calc') || lower.includes('physics') || lower.includes('chem') || lower.includes('advance')) {
+          diff = 'hard';
+        } else if (lower.includes('history') || lower.includes('pe') || lower.includes('intro')) {
+          diff = 'easy';
+        }
+
+        addSubjectRow(name, diff, topics);
+      });
+
+      miniConfetti();
+      playChime();
+    }
+
+    /* ==========================================================================
+       8. CURRICULUM KNOWLEDGE BASE & AUTO-FILL
+       ========================================================================== */
+    const CURRICULUM_DB = {
+      "math": "Calculus & Limits, Trigonometry, Linear Algebra, Probability & Stats, Coordinate Geometry",
+      "physics": "Kinematics & Newton Laws, Electromagnetism, Optics, Thermodynamics, Modern Physics",
+      "chemistry": "Organic Reactions, Chemical Bonding, Electrochemistry, Periodic Trends, Thermodynamics",
+      "biology": "Cellular Respiration, Genetics & DNA, Human Physiology, Ecology, Evolution",
+      "computer": "Data Structures & Arrays, OOP Concepts, Algorithms, Web Dev & APIs, Database SQL",
+      "history": "World War I & II, Industrial Revolution, Cold War Era, Constitutional Rights, Decolonization",
+      "english": "Essay Analysis, Shakespeare Plays, Literary Devices, Grammar & Rhetoric, Poetry Breakdown",
+      "economics": "Microeconomics & Supply/Demand, Fiscal Policy, Inflation & GDP, International Trade",
+      "geography": "Climate Systems, Plate Tectonics, Resource Distribution, Cartography, Urbanization"
+    };
+
+    function autoSuggestChapters(inputEl) {
+      const row = inputEl.closest('.subject-card');
+      const nameInput = row.querySelector('.subject-name-input');
+      const chapInput = row.querySelector('.subject-chapters-input');
+      const name = nameInput.value.toLowerCase().trim();
+
+      for (const [key, val] of Object.entries(CURRICULUM_DB)) {
+        if (name.includes(key)) {
+          chapInput.value = val;
+          return;
+        }
+      }
+      chapInput.value = "Unit 1: Fundamentals, Unit 2: Core Applications, Unit 3: Advanced Problem Solving, Unit 4: Past Paper Practice";
+    }
+
+    /* ==========================================================================
+       9. PRESETS ENGINE FOR 1-CLICK JUDGE TESTING
+       ========================================================================== */
+    const PRESETS = {
+      highschool: {
+        name: "High School Fall Finals 2026",
+        days: 12,
+        hours: "3",
+        strategy: "spaced",
+        subjects: [
+          { name: "AP Mathematics", diff: "hard", chapters: "Limits, Derivatives, Integrals, Differential Equations" },
+          { name: "AP Physics 1", diff: "hard", chapters: "Kinematics, Dynamics, Rotational Motion, Circuits" },
+          { name: "Chemistry", diff: "med", chapters: "Stoichiometry, Bonding, Thermochemistry, Acids & Bases" },
+          { name: "English Literature", diff: "med", chapters: "The Great Gatsby, Essay Structure, Rhetorical Analysis" },
+          { name: "World History", diff: "easy", chapters: "Enlightenment, World Wars, Cold War, Globalization" }
+        ]
+      },
+      stem: {
+        name: "AP STEM Sprint Examination",
+        days: 8,
+        hours: "4",
+        strategy: "hardfirst",
+        subjects: [
+          { name: "Calculus BC", diff: "hard", chapters: "Taylor Series, Parametric Equations, Polar Coordinates" },
+          { name: "Physics C: Mechanics", diff: "hard", chapters: "Work-Energy, Linear Momentum, Planetary Gravitation" },
+          { name: "Computer Science A", diff: "med", chapters: "2D Arrays, ArrayLists, Recursion, Inheritance" },
+          { name: "Statistics", diff: "easy", chapters: "Confidence Intervals, Hypothesis Testing, Chi-Square" }
+        ]
+      },
+      cbse: {
+        name: "CBSE Board Pre-Board Exams",
+        days: 14,
+        hours: "4",
+        strategy: "spaced",
+        subjects: [
+          { name: "Mathematics", diff: "hard", chapters: "Integrals, 3D Geometry, Linear Programming, Vectors" },
+          { name: "Physics", diff: "hard", chapters: "Ray Optics, Wave Optics, Semiconductors, Electrostatics" },
+          { name: "Chemistry", diff: "med", chapters: "Aldehydes & Ketones, Electrochemistry, Biomolecules" },
+          { name: "English Core", diff: "easy", chapters: "Flamingo Prose, Vistas, Formal Letter & Report Writing" },
+          { name: "Physical Education", diff: "easy", chapters: "Yoga, Nutrition, Sports Training, Posture" }
+        ]
+      },
+      speed: {
+        name: "3-Day Emergency Midterm Crunch",
+        days: 3,
+        hours: "5",
+        strategy: "hardfirst",
+        subjects: [
+          { name: "Organic Chemistry", diff: "hard", chapters: "Reaction Mechanisms, Synthesis Paths, NMR Spectroscopy" },
+          { name: "Calculus", diff: "hard", chapters: "Implicit Differentiation, Optimization, Definite Integrals" },
+          { name: "Biology", diff: "med", chapters: "Cell Division, Photosynthesis, Molecular Genetics" }
+        ]
+      }
+    };
+
+    function loadPreset(key) {
+      const p = PRESETS[key];
+      if (!p) return;
+      document.getElementById('examName').value = p.name;
+      document.getElementById('dailyHours').value = p.hours;
+      document.getElementById('studyStrategy').value = p.strategy;
+
+      const targetDate = new Date();
+      targetDate.setDate(targetDate.getDate() + p.days);
+      document.getElementById('examDate').value = targetDate.toISOString().slice(0, 10);
+
+      const listEl = document.getElementById('subjectList');
+      listEl.innerHTML = '';
+      p.subjects.forEach(s => {
+        addSubjectRow(s.name, s.diff, s.chapters);
+      });
+      miniConfetti();
+    }
+
+    /* ==========================================================================
+       10. SUBJECT ROW UI BUILDER
+       ========================================================================== */
+    function addSubjectRow(name = "", diff = "med", chapters = "") {
+      const container = document.getElementById('subjectList');
+      const card = document.createElement('div');
+      card.className = 'subject-card';
+      card.innerHTML = `
+        <div class="subject-row-main">
+          <input type="text" class="subject-name-input" placeholder="Subject Name (e.g. Maths, Physics)" value="${name}">
+          <select class="subject-diff-select">
+            <option value="hard" ${diff === 'hard' ? 'selected' : ''}>🔥 Hard (3.5x Weight)</option>
+            <option value="med" ${diff === 'med' ? 'selected' : ''}>⚡ Medium (2x Weight)</option>
+            <option value="easy" ${diff === 'easy' ? 'selected' : ''}>🌱 Easy (1x Weight)</option>
+          </select>
+          <input type="text" class="subject-chapters-input" placeholder="Chapters/Topics (comma-separated)" value="${chapters}">
+          <button class="btn-icon-del" onclick="this.closest('.subject-card').remove()" title="Delete Subject">🗑️</button>
+        </div>
+        <div class="subject-sub-actions">
+          <span>💡 Tip: Hard subjects get scheduled first & receive more revision slots.</span>
+          <button type="button" class="btn-autofill" onclick="autoSuggestChapters(this)">✨ Auto-Generate Topics</button>
+        </div>
+      `;
+      container.appendChild(card);
+    }
+
+    /* ==========================================================================
+       11. AUTONOMOUS SCHEDULING ALGORITHM (Weighted Spaced Repetition)
+       ========================================================================== */
+    let planState = null;
+
+    function generateSmartPlan() {
+      const examName = document.getElementById('examName').value.trim() || 'Final Exam';
+      const examDateStr = document.getElementById('examDate').value;
+      const dailyHours = parseInt(document.getElementById('dailyHours').value, 10);
+      const strategy = document.getElementById('studyStrategy').value;
+      const pomoMinutes = parseInt(document.getElementById('pomoSize').value, 10);
+
+      if (!examDateStr) {
+        alert(currentLang === 'hi' ? 'Kripya exam date chunein!' : 'Please select an exam date!');
+        return;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const examDate = new Date(examDateStr);
+      examDate.setHours(0, 0, 0, 0);
+
+      const daysDiff = Math.round((examDate - today) / (1000 * 60 * 60 * 24));
+      if (daysDiff < 1) {
+        alert(currentLang === 'hi' ? 'Exam date aane wale dinon mein honi chahiye!' : 'Exam date must be at least tomorrow!');
+        return;
+      }
+
+      const cards = document.querySelectorAll('.subject-card');
+      const subjects = [];
+      cards.forEach(card => {
+        const name = card.querySelector('.subject-name-input').value.trim();
+        const diff = card.querySelector('.subject-diff-select').value;
+        const chaptersRaw = card.querySelector('.subject-chapters-input').value.trim();
+        const chapters = chaptersRaw ? chaptersRaw.split(',').map(c => c.trim()).filter(Boolean) : [];
+
+        if (name) {
+          subjects.push({ name, diff, chapters });
+        }
+      });
+
+      if (subjects.length === 0) {
+        alert(currentLang === 'hi' ? 'Kam se kam ek subject jodiye!' : 'Please add at least one subject!');
+        return;
+      }
+
+      const weights = { hard: 3.5, med: 2.0, easy: 1.0 };
+      const studyDaysCount = Math.max(1, daysDiff);
+      const slotsPerDay = dailyHours;
+      const totalSlots = studyDaysCount * slotsPerDay;
+
+      let totalWeight = 0;
+      subjects.forEach(s => { totalWeight += weights[s.diff]; });
+
+      const allocation = subjects.map(s => {
+        const rawSlots = (weights[s.diff] / totalWeight) * totalSlots;
+        return {
+          name: s.name,
+          diff: s.diff,
+          chapters: s.chapters,
+          targetSlots: Math.max(1, Math.round(rawSlots)),
+          allocated: 0
+        };
+      });
+
+      const slotQueue = [];
+      allocation.forEach(a => {
+        for (let i = 0; i < a.targetSlots; i++) {
+          const chap = a.chapters.length > 0 ? a.chapters[i % a.chapters.length] : 'Core Concepts & Practice';
+          slotQueue.push({
+            subject: a.name,
+            diff: a.diff,
+            chapter: chap,
+            sessionNumber: i + 1
+          });
+        }
+      });
+
+      if (strategy === 'hardfirst') {
+        slotQueue.sort((a, b) => weights[b.diff] - weights[a.diff]);
+      } else {
+        const buckets = {};
+        slotQueue.forEach(item => {
+          if (!buckets[item.subject]) buckets[item.subject] = [];
+          buckets[item.subject].push(item);
+        });
+        const interleaved = [];
+        let remaining = true;
+        while (remaining) {
+          remaining = false;
+          for (const sub of subjects) {
+            if (buckets[sub.name] && buckets[sub.name].length > 0) {
+              interleaved.push(buckets[sub.name].shift());
+              remaining = true;
+            }
+          }
+        }
+        slotQueue.length = 0;
+        slotQueue.push(...interleaved);
+      }
+
+      const planDays = [];
+      let qIndex = 0;
+
+      for (let d = 0; d < studyDaysCount; d++) {
+        const dDate = new Date(today);
+        dDate.setDate(today.getDate() + d);
+        const isLastDay = (d === studyDaysCount - 1);
+        const dayTasks = [];
+
+        if (isLastDay && studyDaysCount > 2) {
+          subjects.forEach((s, sIdx) => {
+            dayTasks.push({
+              id: `${d}-${sIdx}`,
+              subject: s.name,
+              diff: s.diff,
+              chapter: "🌟 Final Rapid Revision & Formula Recall",
+              isRevision: true
+            });
+          });
+        } else {
+          for (let s = 0; s < slotsPerDay; s++) {
+            if (qIndex < slotQueue.length) {
+              const item = slotQueue[qIndex++];
+              dayTasks.push({
+                id: `${d}-${s}`,
+                subject: item.subject,
+                diff: item.diff,
+                chapter: item.chapter,
+                isRevision: false
+              });
+            } else {
+              const fallback = subjects[s % subjects.length];
+              dayTasks.push({
+                id: `${d}-${s}`,
+                subject: fallback.name,
+                diff: fallback.diff,
+                chapter: "Mock Problems & Error Log Review",
+                isRevision: true
+              });
+            }
+          }
+        }
+
+        planDays.push({
+          dayIndex: d,
+          date: dDate,
+          dateString: dDate.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' }),
+          isToday: d === 0,
+          isRevisionDay: isLastDay && studyDaysCount > 2,
+          tasks: dayTasks
+        });
+      }
+
+      planState = {
+        examName,
+        examDate: examDate.getTime(),
+        dailyHours,
+        pomoMinutes,
+        strategy,
+        subjects,
+        allocation,
+        days: planDays,
+        completedTasks: {},
+        streak: 1
+      };
+
+      try {
+        localStorage.setItem('padhaiplan_state', JSON.stringify(planState));
+      } catch(e){}
+
+      renderDashboard();
+      startCountdownTimer();
+      refreshAIAdvice();
+      renderAnalytics();
+      renderCalendar();
+      populateQuizDropdown();
+      renderFormulaSheets();
+      drawForgettingCurve();
+      updateScorePrediction();
+      generateMockExamPaper();
+      miniConfetti();
+
+      document.getElementById('setup').classList.add('hidden');
+      document.getElementById('planView').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       12. DASHBOARD RENDERING & TASK MANAGEMENT
+       ========================================================================== */
+    function renderDashboard() {
+      if (!planState) return;
+
+      document.getElementById('hudExamTitle').textContent = planState.examName;
+      const totalHours = planState.days.reduce((acc, d) => acc + d.tasks.length, 0);
+      document.getElementById('hudTotalHours').textContent = `${totalHours} total study blocks scheduled`;
+
+      const listEl = document.getElementById('daysList');
+      listEl.innerHTML = '';
+
+      planState.days.forEach(day => {
+        const dayCard = document.createElement('div');
+        dayCard.className = `day-card ${day.isToday ? 'is-today' : ''}`;
+        
+        let headerBadges = '';
+        if (day.isToday) headerBadges += `<span class="day-badge-today">Today</span>`;
+        if (day.isRevisionDay) headerBadges += `<span class="day-badge-revision">🎓 Final Mastery & Mock Test</span>`;
+
+        let tasksHtml = '';
+        day.tasks.forEach(task => {
+          const isDone = !!planState.completedTasks[task.id];
+          const diffClass = `diff-${task.diff}`;
+          tasksHtml += `
+            <div class="task-item ${isDone ? 'is-done' : ''}" id="task-row-${task.id}">
+              <div class="task-left">
+                <input type="checkbox" class="task-checkbox" ${isDone ? 'checked' : ''} onchange="toggleTaskDone('${task.id}')">
+                <div class="task-details">
+                  <div class="task-title">${escapeHtml(task.subject)}</div>
+                  <div class="task-subtopic">📖 ${escapeHtml(task.chapter)}</div>
+                </div>
+              </div>
+              <div class="task-right">
+                <span class="diff-pill ${diffClass}">${task.diff}</span>
+                <button class="btn-task-timer" onclick="openFocusModal('${escapeHtml(task.subject)}', '${escapeHtml(task.chapter)}', '${task.id}')">⏱️ Focus</button>
+                <button class="btn-task-quiz" onclick="launchQuizForTopic('${escapeHtml(task.subject)}')">⚡ Quiz</button>
+              </div>
+            </div>
+          `;
+        });
+
+        dayCard.innerHTML = `
+          <div class="day-header">
+            <div class="day-title">
+              <span>Day ${day.dayIndex + 1} (${day.dateString})</span>
+              ${headerBadges}
+            </div>
+            <div class="day-date">${day.tasks.length} study block${day.tasks.length > 1 ? 's' : ''}</div>
+          </div>
+          <div class="task-list">${tasksHtml}</div>
+        `;
+        listEl.appendChild(dayCard);
+      });
+
+      updateReadinessStats();
+    }
+
+    function toggleTaskDone(taskId) {
+      if (!planState) return;
+      if (planState.completedTasks[taskId]) {
+        delete planState.completedTasks[taskId];
+      } else {
+        planState.completedTasks[taskId] = true;
+        miniConfetti();
+        playChime();
+        buddyXp += 25;
+        document.getElementById('buddyXpText').textContent = `${buddyXp} / 500`;
+        document.getElementById('buddyXpBar').style.width = `${Math.min(100, (buddyXp / 500) * 100)}%`;
+        damageBoss(150);
+      }
+
+      try { localStorage.setItem('padhaiplan_state', JSON.stringify(planState)); } catch(e){}
+
+      const row = document.getElementById(`task-row-${taskId}`);
+      if (row) {
+        row.classList.toggle('is-done', !!planState.completedTasks[taskId]);
+      }
+
+      updateReadinessStats();
+      refreshAIAdvice();
+    }
+
+    function updateReadinessStats() {
+      if (!planState) return;
+      let total = 0;
+      let done = 0;
+
+      planState.days.forEach(d => {
+        d.tasks.forEach(t => {
+          total++;
+          if (planState.completedTasks[t.id]) done++;
+        });
+      });
+
+      const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      document.getElementById('hudReadiness').textContent = `${pct}%`;
+      document.getElementById('hudTasksLeft').textContent = `${done} / ${total}`;
+
+      let tier = "Novice 📘";
+      if (pct >= 85) tier = "Grandmaster 🎓";
+      else if (pct >= 60) tier = "Master 🔥";
+      else if (pct >= 30) tier = "Scholar ⭐";
+      else if (pct > 0) tier = "Apprentice ⚡";
+      document.getElementById('hudScholarTier').textContent = tier;
+
+      if (done === total && total > 0) {
+        openCelebModal("🏆 All Complete!", "You finished every study block! You are 100% prepared to ace your exams!");
+      }
+    }
+
+    /* ==========================================================================
+       13. LIVE COUNTDOWN TICKER
+       ========================================================================== */
+    let countdownInterval = null;
+    function startCountdownTimer() {
+      if (countdownInterval) clearInterval(countdownInterval);
+
+      function tick() {
+        if (!planState) return;
+        const now = Date.now();
+        let diff = planState.examDate - now;
+        if (diff < 0) diff = 0;
+
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('cdDays').textContent = d < 10 ? '0' + d : d;
+        document.getElementById('cdHours').textContent = h < 10 ? '0' + h : h;
+        document.getElementById('cdMins').textContent = m < 10 ? '0' + m : m;
+        document.getElementById('cdSecs').textContent = s < 10 ? '0' + s : s;
+      }
+      tick();
+      countdownInterval = setInterval(tick, 1000);
+    }
+
+    /* ==========================================================================
+       14. AI AUTONOMOUS STUDY STRATEGIST ("Aaj Kya Padhun?")
+       ========================================================================== */
+    function refreshAIAdvice() {
+      if (!planState) return;
+
+      let nextTask = null;
+      for (const day of planState.days) {
+        for (const task of day.tasks) {
+          if (!planState.completedTasks[task.id]) {
+            nextTask = { ...task, dayIndex: day.dayIndex, dateString: day.dateString };
+            break;
+          }
+        }
+        if (nextTask) break;
+      }
+
+      const bodyEl = document.getElementById('aiAdvisorText');
+      const actionsEl = document.getElementById('aiAdvisorActions');
+
+      if (!nextTask) {
+        bodyEl.innerHTML = currentLang === 'hi' 
+          ? `🎉 <b>Shabash!</b> Saare tasks complete ho gaye hain. Ab aaram se revision karo aur confident raho!`
+          : `🎉 <b>Incredible job!</b> You have completed all scheduled study blocks. Review formula sheets and rest well before exam day!`;
+        actionsEl.innerHTML = `<button class="btn-action-small" onclick="window.print()">🖨️ Print Final Summary</button>`;
+        return;
+      }
+
+      if (currentLang === 'hi') {
+        bodyEl.innerHTML = `
+          🎯 <b>Agla Best Step:</b> Abhi <b>${escapeHtml(nextTask.subject)}</b> ka topic <i>"${escapeHtml(nextTask.chapter)}"</i> padho.<br>
+          💡 <b>Kyun?</b> Yeh subject <b>${nextTask.diff.toUpperCase()}</b> category mein hai. 25 min ka focused session lene se aapka confidence boost hoga!
+        `;
+      } else {
+        bodyEl.innerHTML = `
+          🎯 <b>Next High-Impact Action:</b> Study <b>${escapeHtml(nextTask.subject)}</b> — topic <i>"${escapeHtml(nextTask.chapter)}"</i>.<br>
+          💡 <b>Strategic Reason:</b> This is categorized as <b>${nextTask.diff.toUpperCase()}</b> priority. Tackling this now ensures active recall before fatigue sets in.
+        `;
+      }
+
+      actionsEl.innerHTML = `
+        <button class="btn-action-small" onclick="openFocusModal('${escapeHtml(nextTask.subject)}', '${escapeHtml(nextTask.chapter)}', '${nextTask.id}')">
+          ▶️ Start 25m Focus Session
+        </button>
+        <button class="btn-action-secondary" onclick="launchQuizForTopic('${escapeHtml(nextTask.subject)}')">
+          ⚡ Practice 3-Question Quiz
+        </button>
+      `;
+    }
+
+    /* ==========================================================================
+       15. POMODORO FOCUS STATION (Timer + Scratchpad + Tab Focus Guard)
+       ========================================================================== */
+    let focusTimer = null;
+    let focusTotalSecs = 25 * 60;
+    let focusRemainingSecs = 25 * 60;
+    let isFocusRunning = false;
+    let activeFocusTaskId = null;
+
+    function openFocusModal(subject, chapter, taskId = null) {
+      activeFocusTaskId = taskId;
+      document.getElementById('focusSubjectTitle').textContent = `${subject}: ${chapter}`;
+      const defaultMinutes = planState ? planState.pomoMinutes : 25;
+      focusTotalSecs = defaultMinutes * 60;
+      focusRemainingSecs = focusTotalSecs;
+      isFocusRunning = false;
+      if (focusTimer) clearInterval(focusTimer);
+
+      updateFocusDisplay();
+      document.getElementById('focusPlayBtn').textContent = '▶️ Start Session';
+      document.getElementById('focusModal').classList.remove('hidden');
+    }
+
+    function closeFocusModal() {
+      if (focusTimer) clearInterval(focusTimer);
+      isFocusRunning = false;
+      document.getElementById('focusModal').classList.add('hidden');
+    }
+
+    function updateFocusDisplay() {
+      const m = Math.floor(focusRemainingSecs / 60);
+      const s = focusRemainingSecs % 60;
+      document.getElementById('focusTimerDisplay').textContent = `${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+
+      const pct = 1 - (focusRemainingSecs / focusTotalSecs);
+      const ring = document.getElementById('focusRingProgress');
+      const offset = 597 * (1 - pct);
+      ring.style.strokeDashoffset = offset;
+    }
+
+    function toggleFocusTimer() {
+      if (isFocusRunning) {
+        clearInterval(focusTimer);
+        isFocusRunning = false;
+        document.getElementById('focusPlayBtn').textContent = '▶️ Resume';
+      } else {
+        isFocusRunning = true;
+        document.getElementById('focusPlayBtn').textContent = '⏸️ Pause';
+        focusTimer = setInterval(() => {
+          focusRemainingSecs--;
+          if (focusRemainingSecs <= 0) {
+            clearInterval(focusTimer);
+            isFocusRunning = false;
+            completeFocusSession(false);
+          } else {
+            updateFocusDisplay();
+          }
+        }, 1000);
+      }
+    }
+
+    function resetFocusTimer() {
+      if (focusTimer) clearInterval(focusTimer);
+      isFocusRunning = false;
+      focusRemainingSecs = focusTotalSecs;
+      document.getElementById('focusPlayBtn').textContent = '▶️ Start Session';
+      updateFocusDisplay();
+    }
+
+    function completeFocusSession(manual = false) {
+      if (focusTimer) clearInterval(focusTimer);
+      isFocusRunning = false;
+      playChime();
+      miniConfetti();
+      damageBoss(200);
+
+      if (activeFocusTaskId && planState) {
+        planState.completedTasks[activeFocusTaskId] = true;
+        try { localStorage.setItem('padhaiplan_state', JSON.stringify(planState)); } catch(e){}
+        renderDashboard();
+      }
+
+      closeFocusModal();
+      openCelebModal("🎉 Block Completed!", "Great concentration! You dealt 200 Damage to the Boss! Take a 5-minute stretch & water break.");
+    }
+
+    // Tab Visibility Focus Guard
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && isFocusRunning) {
+        playChime();
+      }
+    });
+
+    /* ==========================================================================
+       16. FULL TIMED MOCK EXAM SIMULATOR
+       ========================================================================== */
+    const MOCK_QUESTION_BANK = [
+      { q: "Evaluate the limit: lim(x->0) [sin(x)/x]", opts: ["1", "0", "Infinity", "Undefined"], ans: 0 },
+      { q: "What is the SI unit of Electric Capacitance?", opts: ["Farad", "Henry", "Tesla", "Weber"], ans: 0 },
+      { q: "Which law states that PV = nRT for an ideal gas?", opts: ["Ideal Gas Law", "Boyle's Law", "Charles's Law", "Avogadro's Law"], ans: 0 },
+      { q: "What is the worst-case time complexity of QuickSort?", opts: ["O(N^2)", "O(N log N)", "O(N)", "O(1)"], ans: 0 },
+      { q: "In genetics, what is the phenotypic ratio of a standard Mendelian monohybrid cross?", opts: ["3:1", "9:3:3:1", "1:2:1", "1:1"], ans: 0 }
+    ];
+
+    function generateMockExamPaper() {
+      const container = document.getElementById('mockQuestionsList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      MOCK_QUESTION_BANK.forEach((q, qIdx) => {
+        const item = document.createElement('div');
+        item.className = 'mock-q-item';
+        let optsHtml = '';
+        q.opts.forEach((opt, oIdx) => {
+          optsHtml += `
+            <label style="display:flex; align-items:center; gap:8px; margin:6px 0; cursor:pointer;">
+              <input type="radio" name="mock_q_${qIdx}" value="${oIdx}">
+              <span>${opt}</span>
+            </label>
+          `;
+        });
+
+        item.innerHTML = `
+          <div style="font-weight:800; font-size:1rem; margin-bottom:8px;">Q${qIdx + 1}: ${q.q}</div>
+          <div>${optsHtml}</div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function gradeMockExam() {
+      let score = 0;
+      MOCK_QUESTION_BANK.forEach((q, qIdx) => {
+        const sel = document.querySelector(`input[name="mock_q_${qIdx}"]:checked`);
+        if (sel && parseInt(sel.value, 10) === q.ans) score++;
+      });
+
+      const total = MOCK_QUESTION_BANK.length;
+      const pct = Math.round((score / total) * 100);
+      playChime();
+      miniConfetti();
+      openCelebModal(`📊 Score: ${score}/${total} (${pct}%)`, `Mock Exam Results: Grade ${pct >= 80 ? 'A+' : pct >= 60 ? 'B' : 'Needs Review'}. Spaced repetition will ensure top performance on test day!`);
+    }
+
+    /* ==========================================================================
+       17. EBBINGHAUS FORGETTING CURVE SIMULATOR (Canvas Graph)
+       ========================================================================== */
+    function drawForgettingCurve() {
+      const canvas = document.getElementById('forgettingCurveCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "rgba(160, 140, 255, 0.1)";
+      ctx.lineWidth = 1;
+      for (let y = 30; y < h - 20; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(40, y);
+        ctx.lineTo(w - 20, y);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(160, 140, 255, 0.4)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(40, 20);
+      ctx.lineTo(40, h - 30);
+      ctx.lineTo(w - 20, h - 30);
+      ctx.stroke();
+
+      ctx.fillStyle = "#9f97ba";
+      ctx.font = "11px -apple-system, sans-serif";
+      ctx.fillText("100%", 8, 30);
+      ctx.fillText("50%", 14, (h - 30) / 2);
+      ctx.fillText("0%", 20, h - 30);
+
+      ctx.fillText("Day 1", 45, h - 14);
+      ctx.fillText("Day 3", w * 0.35, h - 14);
+      ctx.fillText("Day 7", w * 0.65, h - 14);
+      ctx.fillText("Exam Day (Day 12)", w - 120, h - 14);
+
+      // Red Line: Standard forgetting curve
+      ctx.strokeStyle = "#ef4444";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = 40; x <= w - 20; x++) {
+        const t = (x - 40) / (w - 60) * 10;
+        const retention = Math.exp(-t / 1.8);
+        const y = (h - 40) - (retention * (h - 60)) + 10;
+        if (x === 40) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      // Green Line: PadhaiPlan Spaced Repetition
+      ctx.strokeStyle = "#10b981";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = 40; x <= w - 20; x++) {
+        const norm = (x - 40) / (w - 60);
+        let ret = 0.95;
+        if (norm < 0.25) ret = 1.0 - (norm / 0.25) * 0.15;
+        else if (norm < 0.55) ret = 0.98 - ((norm - 0.25) / 0.3) * 0.1;
+        else if (norm < 0.85) ret = 0.99 - ((norm - 0.55) / 0.3) * 0.08;
+        else ret = 1.0 - ((norm - 0.85) / 0.15) * 0.05;
+
+        const y = (h - 40) - (ret * (h - 60)) + 10;
+        if (x === 40) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    /* ==========================================================================
+       18. EXAM GRADE PREDICTOR & PANIC CALCULATOR
+       ========================================================================= */
+    function updateScorePrediction() {
+      const covered = parseInt(document.getElementById('predCoveredSlider').value, 10);
+      const hours = parseInt(document.getElementById('predHoursSlider').value, 10);
+
+      document.getElementById('predCoveredVal').textContent = `${covered}%`;
+      document.getElementById('predHoursVal').textContent = `${hours} hrs / day`;
+
+      let score = Math.round((covered * 0.65) + (hours * 5.2) + 12);
+      if (score > 98) score = 98;
+      if (score < 35) score = 35;
+
+      document.getElementById('predScoreVal').textContent = `${score}%`;
+
+      const badge = document.getElementById('predPanicBadge');
+      const rec = document.getElementById('predRecommendation');
+
+      if (score >= 88) {
+        badge.className = "panic-badge panic-low";
+        badge.textContent = "CALM & ON TRACK (LOW PANIC)";
+        rec.textContent = "Outstanding pace! Keep up spaced repetition and solve 1 past paper!";
+      } else if (score >= 70) {
+        badge.className = "panic-badge panic-med";
+        badge.textContent = "MODERATE PANIC — FOCUS ON HIGH YIELD";
+        rec.textContent = "Good foundation, but prioritize Hard category subjects immediately to reach 85%+!";
+      } else {
+        badge.className = "panic-badge panic-high";
+        badge.textContent = "HIGH ALERT — ACTIVATE 24H SPRINT";
+        rec.textContent = "Switch to 4+ hours/day and focus exclusively on core formula recall and mock test problems!";
+      }
+    }
+
+    /* ==========================================================================
+       19. FORMULA & RAPID REVISION CHEATSHEET BOARD
+       ========================================================================== */
+    const FORMULAS_DATA = [
+      {
+        subject: "📐 Mathematics (Calculus)",
+        name: "Fundamental Product & Chain Rule",
+        formula: "d/dx [f(x)·g(x)] = f'g + fg'\nd/dx [f(g(x))] = f'(g(x)) · g'(x)"
+      },
+      {
+        subject: "⚡ Physics (Mechanics & Energy)",
+        name: "Work-Energy & Kinetic Theorem",
+        formula: "W_net = ΔK = 1/2·m·v_f² - 1/2·m·v_i²\nP = dW/dt = F · v"
+      },
+      {
+        subject: "🧪 Chemistry (Thermodynamics)",
+        name: "Gibbs Free Energy & Spontaneity",
+        formula: "ΔG = ΔH - T·ΔS\n(ΔG < 0: Spontaneous reaction)"
+      },
+      {
+        subject: "💻 Computer Science (Algorithms)",
+        name: "Big-O Time Complexities",
+        formula: "Binary Search: O(log N)\nMergeSort / QuickSort: O(N log N)\nHash Map Lookup: O(1)"
+      },
+      {
+        subject: "🧬 Biology (Cellular Genetics)",
+        name: "Central Dogma & DNA Pairing",
+        formula: "DNA -> (Transcription) -> mRNA -> (Translation) -> Protein\nBase pairs: A=T (2 H-bonds), G≡C (3 H-bonds)"
+      },
+      {
+        subject: "📊 Economics (Microeconomics)",
+        name: "Price Elasticity of Demand (PED)",
+        formula: "PED = (% Δ Quantity Demanded) / (% Δ Price)\n|PED| > 1: Elastic, |PED| < 1: Inelastic"
+      }
+    ];
+
+    function renderFormulaSheets() {
+      const grid = document.getElementById('formulaSheetGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      FORMULAS_DATA.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'formula-card';
+        card.innerHTML = `
+          <h3>${item.subject}</h3>
+          <div style="font-weight:700; font-size:0.86rem; color:var(--text-main);">${item.name}</div>
+          <code class="formula-code">${escapeHtml(item.formula)}</code>
+          <button class="btn-action-secondary" style="font-size:0.75rem; padding:4px 8px; margin-top:6px;" onclick="copyFormula(this, '${escapeHtml(item.formula)}')">📋 Copy Formula</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function copyFormula(btn, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const old = btn.textContent;
+        btn.textContent = "✅ Copied!";
+        setTimeout(() => { btn.textContent = old; }, 1500);
+      });
+    }
+
+    /* ==========================================================================
+       20. INTERACTIVE AI QUIZ & FLASHCARD ENGINE
+       ========================================================================== */
+    const QUIZ_BANK = {
+      default: [
+        {
+          q: "What is the primary benefit of the 'Spaced Repetition' study technique?",
+          opts: [
+            "It interrupts the forgetting curve by spacing reviews over expanding intervals",
+            "It allows studying only 5 minutes before the exam",
+            "It eliminates the need for solving past papers",
+            "It only works for memorizing history dates"
+          ],
+          ans: 0,
+          exp: "Spaced repetition combats Hermann Ebbinghaus's forgetting curve, shifting concepts from short-term to long-term memory."
+        },
+        {
+          q: "When tackling hard subjects, why is the Pomodoro technique (25 min focus) effective?",
+          opts: [
+            "It tricks the brain into starting without feeling overwhelmed by cognitive load",
+            "It guarantees 100% marks in any exam immediately",
+            "It replaces the need for taking class notes",
+            "It forces you to study for 8 hours without resting"
+          ],
+          ans: 0,
+          exp: "Short timed intervals lower the initial friction of procrastination and maintain high synaptic focus."
+        },
+        {
+          q: "Which active recall method produces the highest retention rate during revision?",
+          opts: [
+            "Self-quizzing & teaching the concept (Feynman Technique)",
+            "Passively re-reading the textbook chapter 5 times",
+            "Highlighting every line on the page with bright neon markers",
+            "Listening to music while skimming formulas"
+          ],
+          ans: 0,
+          exp: "Retrieval practice forces neural pathways to reconstruct knowledge actively, creating robust memory traces."
+        }
+      ],
+      math: [
+        {
+          q: "What is the derivative of f(x) = ln(x) with respect to x?",
+          opts: ["1/x", "e^x", "x", "1/(x^2)"],
+          ans: 0,
+          exp: "The fundamental derivative of the natural log function ln(x) is 1/x for all x > 0."
+        },
+        {
+          q: "What is the value of sin^2(θ) + cos^2(θ)?",
+          opts: ["1", "0", "tan(θ)", "2"],
+          ans: 0,
+          exp: "This is the Pythagorean trigonometric identity, which equals 1 for any real angle θ."
+        }
+      ],
+      physics: [
+        {
+          q: "According to Newton's Second Law, what is the net force F equal to?",
+          opts: ["m * a (Mass × Acceleration)", "m / v", "0.5 * m * v^2", "m * g * h"],
+          ans: 0,
+          exp: "Net Force = mass times acceleration (F = dp/dt = ma for constant mass)."
+        },
+        {
+          q: "What is the speed of light in vacuum (c)?",
+          opts: ["3.00 × 10^8 m/s", "3.00 × 10^6 m/s", "9.8 m/s^2", "1.50 × 10^8 m/s"],
+          ans: 0,
+          exp: "The universal speed of electromagnetic radiation in a vacuum is approximately 3.00 × 10^8 m/s."
+        }
+      ]
+    };
+
+    function populateQuizDropdown() {
+      const select = document.getElementById('quizSubjectSelect');
+      if (!select || !planState) return;
+      select.innerHTML = '<option value="general">🧠 General Exam Strategy</option>';
+      planState.subjects.forEach(s => {
+        select.innerHTML += `<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`;
+      });
+      loadQuizForSubject();
+    }
+
+    let activeQuizQuestions = [];
+    let currentQuizIndex = 0;
+
+    function loadQuizForSubject() {
+      const sel = document.getElementById('quizSubjectSelect').value.toLowerCase();
+      let pool = QUIZ_BANK.default;
+      for (const [key, qList] of Object.entries(QUIZ_BANK)) {
+        if (sel.includes(key)) {
+          pool = qList;
+          break;
+        }
+      }
+      activeQuizQuestions = pool;
+      currentQuizIndex = Math.floor(Math.random() * pool.length);
+      renderQuizQuestion();
+    }
+
+    function launchQuizForTopic(subject) {
+      switchTab('quiz');
+      const sel = document.getElementById('quizSubjectSelect');
+      if (sel) {
+        sel.value = subject;
+        loadQuizForSubject();
+      }
+    }
+
+    function renderQuizQuestion() {
+      const q = activeQuizQuestions[currentQuizIndex];
+      document.getElementById('quizQuestionText').textContent = q.q;
+      const optsBox = document.getElementById('quizOptionsBox');
+      const expBox = document.getElementById('quizExplanationBox');
+      expBox.classList.add('hidden');
+      optsBox.innerHTML = '';
+
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.textContent = `${String.fromCharCode(65 + idx)}) ${opt}`;
+        btn.onclick = () => selectQuizAnswer(idx, q.ans, q.exp, btn);
+        optsBox.appendChild(btn);
+      });
+    }
+
+    function selectQuizAnswer(chosenIdx, correctIdx, exp, btnEl) {
+      const allBtns = document.querySelectorAll('.quiz-opt-btn');
+      allBtns.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === correctIdx) b.classList.add('correct');
+        else if (idx === chosenIdx) b.classList.add('wrong');
+      });
+
+      const expBox = document.getElementById('quizExplanationBox');
+      expBox.textContent = `💡 Explanation: ${exp}`;
+      expBox.classList.remove('hidden');
+
+      if (chosenIdx === correctIdx) {
+        playChime();
+        miniConfetti();
+        buddyXp += 20;
+        document.getElementById('buddyXpText').textContent = `${buddyXp} / 500`;
+        document.getElementById('buddyXpBar').style.width = `${Math.min(100, (buddyXp / 500) * 100)}%`;
+      }
+    }
+
+    /* ==========================================================================
+       21. CALENDAR & ANALYTICS VIEWS
+       ========================================================================== */
+    function renderCalendar() {
+      const grid = document.getElementById('calendarGrid');
+      if (!grid || !planState) return;
+      grid.innerHTML = '';
+
+      planState.days.forEach(day => {
+        const cell = document.createElement('div');
+        cell.className = 'cal-cell';
+        let chips = '';
+        day.tasks.forEach(t => {
+          const isDone = !!planState.completedTasks[t.id];
+          chips += `<div class="cal-chip" style="${isDone ? 'opacity:0.4; text-decoration:line-through;' : ''}">${escapeHtml(t.subject)}</div>`;
+        });
+
+        cell.innerHTML = `
+          <div class="cal-cell-header">
+            <span>Day ${day.dayIndex + 1}</span>
+            <span>${day.date.getDate()} ${day.date.toLocaleString('default', { month: 'short' })}</span>
+          </div>
+          <div>${chips}</div>
+        `;
+        grid.appendChild(cell);
+      });
+    }
+
+    function renderAnalytics() {
+      const container = document.getElementById('analyticsBars');
+      if (!container || !planState) return;
+      container.innerHTML = '';
+
+      const counts = {};
+      let maxCount = 1;
+      planState.days.forEach(d => {
+        d.tasks.forEach(t => {
+          counts[t.subject] = (counts[t.subject] || 0) + 1;
+          if (counts[t.subject] > maxCount) maxCount = counts[t.subject];
+        });
+      });
+
+      planState.subjects.forEach(s => {
+        const c = counts[s.name] || 0;
+        const pct = Math.round((c / maxCount) * 100);
+        const row = document.createElement('div');
+        row.className = 'analytics-row';
+        row.innerHTML = `
+          <div class="analytics-meta">
+            <span>${escapeHtml(s.name)} (${s.diff.toUpperCase()})</span>
+            <span>${c} Sessions (~${c * 0.5} hrs)</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: ${pct}%;"></div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    /* ==========================================================================
+       22. EXPORT ENGINE (.ICS CALENDAR GENERATOR)
+       ========================================================================== */
+    function exportToICS() {
+      if (!planState) return;
+      let icsData = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//PadhaiPlan AI//CSC Back-to-School Hackathon 2026//EN",
+        "CALSCALE:GREGORIAN",
+        "METHOD:PUBLISH"
+      ];
+
+      planState.days.forEach((day, dIdx) => {
+        day.tasks.forEach((task, tIdx) => {
+          const startTime = new Date(day.date);
+          startTime.setHours(9 + tIdx, 0, 0, 0);
+          const endTime = new Date(startTime);
+          endTime.setMinutes(endTime.getMinutes() + planState.pomoMinutes);
+
+          function formatICSDate(d) {
+            return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+          }
+
+          icsData.push("BEGIN:VEVENT");
+          icsData.push(`UID:padhaiplan-${day.dayIndex}-${tIdx}-${Date.now()}@hackathon`);
+          icsData.push(`DTSTAMP:${formatICSDate(new Date())}`);
+          icsData.push(`DTSTART:${formatICSDate(startTime)}`);
+          icsData.push(`DTEND:${formatICSDate(endTime)}`);
+          icsData.push(`SUMMARY:📚 Study: ${task.subject}`);
+          icsData.push(`DESCRIPTION:Topic: ${task.chapter} (${task.diff} priority). Built with PadhaiPlan AI.`);
+          icsData.push("STATUS:CONFIRMED");
+          icsData.push("END:VEVENT");
+        });
+      });
+
+      icsData.push("END:VCALENDAR");
+
+      const blob = new Blob([icsData.join("\r\n")], { type: "text/calendar;charset=utf-8" });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `StudyPlan_${planState.examName.replace(/\\s+/g, '_')}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function backupJSON() {
+      if (!planState) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(planState, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `PadhaiPlan_Backup_${Date.now()}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function editPlanSetup() {
+      document.getElementById('planView').classList.add('hidden');
+      document.getElementById('setup').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetProgress() {
+      if (confirm(currentLang === 'hi' ? 'Kya aap sabhi progress reset karna chahte hain?' : 'Are you sure you want to reset all completed tasks?')) {
+        if (planState) {
+          planState.completedTasks = {};
+          try { localStorage.setItem('padhaiplan_state', JSON.stringify(planState)); } catch(e){}
+          renderDashboard();
+        }
+      }
+    }
+
+    /* ==========================================================================
+       23. TAB NAVIGATION
+       ========================================================================== */
+    function switchTab(tabKey) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-view').forEach(view => view.classList.add('hidden'));
+
+      const activeBtn = document.getElementById(`tab-${tabKey}`);
+      const activeView = document.getElementById(`view-${tabKey}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      if (activeView) activeView.classList.remove('hidden');
+
+      if (tabKey === 'memory') drawForgettingCurve();
+    }
+
+    /* ==========================================================================
+       24. CONFETTI CELEBRATIONS
+       ========================================================================== */
+    function miniConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#8a6bff', '#ff6b9d', '#10b981', '#f59e0b', '#06b6d4', '#fff'];
+
+      for (let i = 0; i < 40; i++) {
+        particles.push({
+          x: window.innerWidth / 2,
+          y: window.innerHeight * 0.45,
+          vx: (Math.random() - 0.5) * 12,
+          vy: (Math.random() - 0.8) * 12,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: 1,
+          rot: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.35;
+          p.alpha -= 0.02;
+          p.rot += p.vRot;
+
+          if (p.alpha > 0) {
+            alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rot * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.alpha);
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      render();
+    }
+
+    function openCelebModal(title, sub) {
+      document.getElementById('celebTitle').textContent = title;
+      document.getElementById('celebSubtitle').textContent = sub;
+      document.getElementById('celebModal').classList.remove('hidden');
+      miniConfetti();
+    }
+
+    function closeCelebModal() {
+      document.getElementById('celebModal').classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /* ==========================================================================
+       25. INITIALIZATION ON PAGE LOAD
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const savedTheme = localStorage.getItem('padhaiplan_theme');
+        if (savedTheme) setTheme(savedTheme);
+      } catch(e){}
+
+      loadPreset('highschool');
+
+      try {
+        const savedState = localStorage.getItem('padhaiplan_state');
+        if (savedState) {
+          planState = JSON.parse(savedState);
+          renderDashboard();
+          startCountdownTimer();
+          refreshAIAdvice();
+          renderAnalytics();
+          renderCalendar();
+          populateQuizDropdown();
+          renderFormulaSheets();
+          drawForgettingCurve();
+          updateScorePrediction();
+          generateMockExamPaper();
+          document.getElementById('setup').classList.add('hidden');
+          document.getElementById('planView').classList.remove('hidden');
+        }
+      } catch(e){}
+    });
+
+    window.addEventListener('resize', () => {
+      drawForgettingCurve();
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a451db28ebabffa6',t:'MTc5MTA5MjQ3MQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
